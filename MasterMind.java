@@ -50,7 +50,13 @@ class Player{
 				guess = scanner.nextLine().toUpperCase();
 				amountOfTurns--;	
 				guessChar = guess.toCharArray();
-				checkIfRightPlace();
+				
+				for(int i = 0; i< guessChar.length; i++) {
+					letterRightPlace(guess.charAt(i), Code.code.charAt(i));
+					letterInIt(i);
+				}
+				
+				//checkIfRightPlace();
 			//	int inside = checkIfIsIn();
 			//	if(inside >0) {
 			//		System.out.println(inside + " letter(s) zitten er wel in, maar niet op de goede plek");
@@ -63,59 +69,34 @@ class Player{
 	}//end method guessing
 	
 	
-	void checkIfRightPlace() {
-
-		int inside = checkIfIsIn();
-	//	System.out.println(inside);
-		for(int i = 0; i < inside ; i++) {
-		//	System.out.println(Code.code);
-			if(guessChar[i] == Code.codeChar[i]) {
-				System.out.println(Code.codeChar[i] + " staat op de goede plek");
-		//		System.out.println("jeej");
-			}else {
-				System.out.println(guessChar[i] + " wel in, niet niet goede plek");
-			}
-		}//end forloop1
 	
-		
-	}//end method checkIfRightPlace
 	
-	int checkIfIsIn() {
-
-		int aantalAanwezig = 0;
-		for(char letterg : guessChar) {
-		//	System.out.println("gok letter = " + letterg);
-			for(char letterc : Code.codeChar) {
-		//		System.out.println("code letter = " + letterc);
-				if(letterg == letterc ) {
-					System.out.println(letterg + " zit er wel in");
-					aantalAanwezig++;
-		//			System.out.println(aantalAanwezig);
-					break;
-				}
-				
-			}
-			break;
+	void letterRightPlace(char g, char c) {
+		if(g == c) {
+			System.out.println(g + " staat op de goede plek");
+		}else {
+			System.out.println(g + " niet");
 		}
-		
-		return aantalAanwezig;
 	}
+	
+	void letterInIt(int i) {
+		int zitErIn = 0;
+		for(int j = 0; j< Code.codeChar.length ; j++) {
+			if(guess.charAt(i) == Code.code.charAt(j)
+					&&
+					guess.charAt(j) != Code.code.charAt(j)
+					//&&
+				
+				) {
+				System.out.println(guess.charAt(i) + " zit er in");
+			}
+				
+		}
+	}
+	
 			
 	
-			/*else if(letter == Code.codeChar[1]) {
-				System.out.println(Code.codeChar[1]);
-				System.out.println("jeej");
-			}
-			else if(letter == Code.codeChar[2]) {
-				System.out.println(Code.codeChar[2]);
-				System.out.println("jeej");
-			}
-			else if(letter == Code.codeChar[3]) {
-				System.out.println(Code.codeChar[3]);
-				System.out.println("jeej");
-			}else {
-				System.out.println("boe!");
-*/
+			
 		
 
 }//end class Player
@@ -123,20 +104,7 @@ class Player{
 	
 	
 		
-		/*for(int i = 0; i< Code.codeChar.length; i++) {
-			System.out.println(i + "i");
-			System.out.println(Code.codeChar[i] + "letter op plek i in code");
-			System.out.println(guessChar[i] + "letter op plek i in guess");
-
-			if(guessChar[i] == Code.codeChar[i]) {
-
-				System.out.println("De letter " + guessChar[i] + " staat op de goede plek. (" + (i +1) + ").");
-				i++;
-			}
-
-
-		*/
-	
+		
 	
 
 
