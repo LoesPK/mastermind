@@ -51,10 +51,10 @@ class Player{
 				amountOfTurns--;	
 				guessChar = guess.toCharArray();
 				checkIfRightPlace();
-				boolean ja = yes();
-				if(ja) {
-					System.out.println("letter zit er wel in");
-				}
+			//	int inside = checkIfIsIn();
+			//	if(inside >0) {
+			//		System.out.println(inside + " letter(s) zitten er wel in, maar niet op de goede plek");
+			//	}
 				//for(int i = 0; i <guess.length(); i++) {
 				//	System.out.println(guess.charAt(i));
 			//	}//end for loop
@@ -64,37 +64,41 @@ class Player{
 	
 	
 	void checkIfRightPlace() {
-		//System.out.println(Code.codeChar[0] + Code.codeChar[1] + Code.codeChar[2] + Code.codeChar[3]);
-		/*for(int i = 0; i < guessChar.length ; i++) {
+
+		int inside = checkIfIsIn();
+	//	System.out.println(inside);
+		for(int i = 0; i < inside ; i++) {
+		//	System.out.println(Code.code);
 			if(guessChar[i] == Code.codeChar[i]) {
 				System.out.println(Code.codeChar[i] + " staat op de goede plek");
-				System.out.println("jeej");
+		//		System.out.println("jeej");
 			}else {
-				System.out.println(Code.codeChar[i] + " staat niet op de goede plek");
+				System.out.println(guessChar[i] + " wel in, niet niet goede plek");
 			}
 		}//end forloop1
-*/		
-		
-		
-		
+	
 		
 	}//end method checkIfRightPlace
 	
-	boolean yes() {
-		System.out.println("in yes");
-		boolean yes = false;
+	int checkIfIsIn() {
+
+		int aantalAanwezig = 0;
 		for(char letterg : guessChar) {
-			System.out.println("gok letter = " + letterg);
+		//	System.out.println("gok letter = " + letterg);
 			for(char letterc : Code.codeChar) {
-				System.out.println("code letter = " + letterc);
-				if(letterg == letterc) {
-					System.out.println("gelijk");
-					return true;
-				}else {
-					return false;
+		//		System.out.println("code letter = " + letterc);
+				if(letterg == letterc ) {
+					System.out.println(letterg + " zit er wel in");
+					aantalAanwezig++;
+		//			System.out.println(aantalAanwezig);
+					break;
 				}
+				
 			}
+			break;
 		}
+		
+		return aantalAanwezig;
 	}
 			
 	
