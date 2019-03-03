@@ -3,10 +3,8 @@ import java.util.Scanner;
 
 public class MasterMind {
 	public static void main(String[] args) {
-		Code code = new Code();
+
 		Game playMastermind = new Game();
-		
-		code.codeGenerator();//check of code werkt
 	//	playMastermind.showPlayer();//check of player werkt
 		playMastermind.play();
 		System.out.println("bedankt voor het spelen");
@@ -18,10 +16,13 @@ public class MasterMind {
 
 class Game{
 	Player player1 = new Player();
-	Code code = new Code();
 	Scanner scanner = new Scanner(System.in);
 	boolean codeCorrect = false;
 	Prompter prompter = new Prompter();
+	String normalizedGuess = "";
+	String guessCopy = "";
+	String codeCopy = Code.code;
+	
 	
 	
 	void play() {
@@ -31,13 +32,14 @@ class Game{
 			String input = scanner.nextLine();
 			switch(input) {
 			case "s": 
+				Code.codeGenerator();
 				System.out.println("Ik heb een code in mijn hoofd met 4 letters. De letters ABCDEF kunnen in de code zitten.");
 				System.out.println("Letters mogen vaker voorkomen. Je hebt 12 keer om de code te kraken.");
 				System.out.println("Veel succes!");
 				guessing();
 				break;
 			case "q": System.out.println("bangerik! ");
-				return;
+				System.exit(0);;
 			default: System.out.println("maak een keuze"); 
 			}//end switch
 //			guessing();
@@ -46,32 +48,36 @@ class Game{
 	
 	
 	void guessing() {
-		Scanner scanner = new Scanner(System.in);
 			while(true) {
-			//	System.out.println(player1.guess + " hallo"); // check of code geraden goed wordt opgeslagen
 				
-			//	System.out.println(codeCorrect); // check of codeCorrect is goede waarde
-				player1.guess = scanner.nextLine().toUpperCase();
 				while(player1.turn < 12 && codeCorrect == false) {
 					System.out.println("Voer 4 letters in:");
+					player1.guess = scanner.nextLine();
 					player1.guessChar = player1.guess.toCharArray();
+					normalizedGuess = player1.normalizeInput();
+					guessCopy = normalizedGuess;
+					player1.guessCharNormalized = normalizedGuess.toCharArray();
 					player1.turn++;	
 					
-					for(int i = 0; i< player1.guessChar.length; i++) {
-						letterRightPlace(player1.guess.charAt(i), Code.code.charAt(i));
+					//System.out.println(player1.turn);//checken hoeveelste beurt
+					System.out.println(normalizedGuess);//check of normalizedguess goed gaat
+
+					for(int i = 0; i< player1.guessCharNormalized.length; i++) {
+						System.out.println("in controle");//checken of hij in controle van letters komt
+						letterRightPlace(guessCopy.charAt(i), codeCopy.charAt(i));
 						letterInIt(i);
 					}//end for loop
 					
-					
-					codeCorrect = codeCompleted(player1.guess, Code.code);
+					player1.AllreadyGuessed = "";
+					codeCorrect = codeCompleted(guessCopy, codeCopy);
 					break;
 				}//end while loop
-				while(player1.turn >= 12 && player1.guess != Code.code) {
+				while(player1.turn >= 12 && guessCopy != codeCopy) {
 					System.out.println("Jammer joh, je beurten zijn op en je hebt de code niet gekraakt");
-					System.out.println(code.code + " was de goede code");
+					System.out.println(Code.code + " was de goede code");
 					break;
 				}
-				while(player1.guess.equals(Code.code) ) {
+				while(normalizedGuess.equals(Code.code) ) {
 					System.out.println("Leuk man, je hebt de code gekraakt");
 					break;
 				}
@@ -83,27 +89,34 @@ class Game{
 	void letterRightPlace(char g, char c) {		////staat een letter op de goede plek
 		if(g == c) {
 			System.out.println("Er staat er 1 op de goede plek");
+			System.out.println(g);
+			guessCopy = normalizedGuess.replace(g, 'h'); 
+			codeCopy = Code.code.replace(c, 'i');
+			System.out.println(guessCopy);
+			System.out.println(codeCopy);
 		}//end if statement
 	}//end method letterRightPlace
 	
 	void letterInIt(int i) {			////zit letter er uberhaupt in?
 		int inIt = 0;
-		int allesFout = 0;
-		for(int j = 0; j< Code.codeChar.length ; j++) {
-
-			if(player1.guess.charAt(i) == Code.code.charAt(j)
-			&& player1.guess.charAt(j) != Code.code.charAt(j)
-			&& !contains(player1.guess.charAt(i), player1.AllreadyGuessed)) 
+//		int allesFout = 0;
+		for(int j = 0; j< Code.codeChar.length ; j++) { 
+			System.out.println(player1.AllreadyGuessed);//checken of hij juiste letters op slaat
+			if(guessCopy.charAt(i) == codeCopy.charAt(j) //check of ergens er in
+			&& guessCopy.charAt(j) != codeCopy.charAt(j) //check of exact zelfde plek 
+			//&& !contains(normalizedGuess.charAt(i), player1.AllreadyGuessed)
+			) //check of letter niet al gecontroleerd
 			{
+				guessCopy.replace((char)i, 'h');
+				guessCopy.replace((char)j, 'i');
+				System.out.println(guessCopy);
+				System.out.println(codeCopy);
 				inIt++;
-				player1.AllreadyGuessed += player1.guess.charAt(i);
+				//player1.AllreadyGuessed += normalizedGuess.charAt(i);
+
 				System.out.println("er zit er " + inIt + " in, maar op de verkeerde plek");
 			}//end if statement
 		}//end for loop
-//		if(inIt > 0) {
-//			System.out.println("er zit er " + inIt + " in, maar op de verkeerde plek");
-//		}//end if
-
 	}//end method letterInIt
 	
 	boolean codeCompleted(String g, String c) {
@@ -135,13 +148,59 @@ class Game{
 
 
 class Player{
+	Scanner scanner = new Scanner(System.in);
 	int turn;
 	String guess= "";
-	char [] guessChar = new char[4];
+	char [] guessChar = new char[20];
+	char[] guessCharNormalized = new char[4];
 	String AllreadyGuessed = "";
 	Player(){
 		turn = 1;
 	}
+	
+	
+	String normalizeInput() { //normalizen van de input van de speler
+		System.out.println("in normalized");
+		int digitInIt = 0;
+		String g = guess;
+		System.out.println(guess);
+		
+		out:
+		for(char C : guessChar) {//controle voor digit doet deze controle maar 1 keer, dus als iemand 2 keer achter elkaar cifers in voert controleert hij niet meer.
+			if(Character.isDigit(C)) {
+				digitInIt++;
+			}
+			while(digitInIt>0) {//normalize digit
+				System.out.println("U heeft getallen ingevoerd ipv letters. Voer een nieuwe code in");
+				g = scanner.nextLine();
+				break out;
+			}//end while digit	
+			return g.toUpperCase();
+		}//end forloop
+	//	System.out.println(digitInIt); //checken of digitinit werkt
+			
+		System.out.println("problemen?");
+		
+		while(guess.length()> 4)  { //trimmen van code als langer dan 4 letters
+			g = guess.substring(0, 4);
+			System.out.println("Je hebt meer dan 4 letters getypt, ik gebruik alleen de eerste 4 letters.");
+			System.out.println(g);
+			return g.toUpperCase();
+			
+		}//end while length
+		out:
+		while(guess.length()<4) { // aangeven als te korte code
+			System.out.println("Je hebt te weinig letters getypt, voer 4 letters in");
+			g = scanner.nextLine();
+			if(g.length() != 4) {
+				break out;
+			}else {
+				return g.toUpperCase();
+			}
+		}//end while te kort
+		System.out.println("problemen?");
+		return g.toUpperCase();
+	}//end normalizing
 	
 }//end class Player
 	
@@ -150,8 +209,8 @@ class Player{
 class Code{
 	static String code = "";
 	static char [] codeChar = new char [4];
-	Random random = new Random();
-	void codeGenerator() {
+	static Random random = new Random();
+	static void codeGenerator() {
 		for( int i = 0; i < 4 ; i++) {
 			char letter = (char)(random.nextInt(6) + 65);//hoofdletter tussen de A en F
 			code += letter;
